@@ -1,0 +1,31 @@
+import torch
+
+x_data = torch.Tensor([[1.0], [2.0], [3.0]])
+y_data = torch.Tensor([[2.0], [4.0], [6.0]])
+w = torch.randn(1, 1, requires_grad=True)
+b = torch.randn(1, requires_grad=True)
+print(x_data.shape, y_data.shape, w.shape)
+
+
+def forward(w, x, b):
+    return x @ w + b
+
+
+def mse(y, y_pred):
+    l = 0
+    for i, j in enumerate(y):
+        l += (y[i] - y_pred[i]) ** 2
+    l /= i + 1
+    return l
+
+
+for i in range(10):
+    y = forward(w, x_data, b)
+    loss = mse(y_data, y)
+    print(loss)
+    loss.backward()
+    with torch.no_grad():
+        w -= w.grad * 0.01
+        b -= b.grad * 0.01
+    w.grad.zero_()
+    b.grad.zero_()
